@@ -18,10 +18,6 @@ This document is based on [Clean Code Javascript](https://github.com/ryanmcdermo
 
 This document will outline the best practices for organizing and styling JS documents for Brewers Association Projects, as well as other programming best practices.
 
-
-
-
-
 ## Write Clean Code
 We try and share coding styles between JS, CSS, and PHP. 
 > - [Use tabs over spaces for indents](http://lea.verou.me/2012/01/why-tabs-are-clearly-superior/)
