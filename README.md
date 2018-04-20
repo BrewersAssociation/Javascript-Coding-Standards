@@ -8,8 +8,11 @@ This document will outline the best practices for organizing and styling JS docu
 ## Table of Contents
 
  - Introduction
- - Write Clean Code (Coding Styles)
+ - Write Clean Code (Coding Styles)(#Write Clean Code (Coding Styles))
+ - Formatting(#Comments)
+ - Comments
  - Variables
+ - Functions
 
 
 ## Write Clean Code (Coding Styles)
@@ -114,6 +117,267 @@ function createMicrobrewery(name = 'Hipster Brew Co.') {
   // ...
 }
 ```
+## **Formatting**
+
+*From Ryan McDermott:*
+Formatting is subjective. Like many rules herein, there is no hard and fast
+rule that you must follow. The main point is DO NOT ARGUE over formatting.
+There are [tons of tools](http://standardjs.com/rules.html) to automate this.
+Use one! It's a waste of time and money for engineers to argue over formatting.
+
+For things that don't fall under the purview of automatic formatting
+(indentation, tabs vs. spaces, double vs. single quotes, etc.) look here
+for some guidance.
+
+*From Nate*
+All that said, there are some formatting rules I'd like BA Developers to follow to ensure consistent code (and maybe we use an automation tool in the future.
+
+### Code Structure
+- Tabs over spaces
+- Consistent Comment styles
+- Indent code to maintain readability/hierarchy
+
+### Use consistent capitalization
+JavaScript is untyped, so capitalization tells you a lot about your variables,
+functions, etc. These rules are subjective, so your team can choose whatever
+they want. The point is, no matter what you all choose, just be consistent.
+
+**Bad:**
+```javascript
+const DAYS_IN_WEEK = 7;
+const daysInMonth = 30;
+
+const songs = ['Back In Black', 'Stairway to Heaven', 'Hey Jude'];
+const Artists = ['ACDC', 'Led Zeppelin', 'The Beatles'];
+
+function eraseDatabase() {}
+function restore_database() {}
+
+class animal {}
+class Alpaca {}
+```
+
+**Good:**
+```javascript
+const DAYS_IN_WEEK = 7;
+const DAYS_IN_MONTH = 30;
+
+const SONGS = ['Back In Black', 'Stairway to Heaven', 'Hey Jude'];
+const ARTISTS = ['ACDC', 'Led Zeppelin', 'The Beatles'];
+
+function eraseDatabase() {}
+function restoreDatabase() {}
+
+class Animal {}
+class Alpaca {}
+```
+**[⬆ back to top](#table-of-contents)**
+
+
+### Function callers and callees should be close
+If a function calls another, keep those functions vertically close in the source
+file. Ideally, keep the caller right above the callee. We tend to read code from
+top-to-bottom, like a newspaper. Because of this, make your code read that way.
+
+**Bad:**
+```javascript
+class PerformanceReview {
+  constructor(employee) {
+    this.employee = employee;
+  }
+
+  lookupPeers() {
+    return db.lookup(this.employee, 'peers');
+  }
+
+  lookupManager() {
+    return db.lookup(this.employee, 'manager');
+  }
+
+  getPeerReviews() {
+    const peers = this.lookupPeers();
+    // ...
+  }
+
+  perfReview() {
+    this.getPeerReviews();
+    this.getManagerReview();
+    this.getSelfReview();
+  }
+
+  getManagerReview() {
+    const manager = this.lookupManager();
+  }
+
+  getSelfReview() {
+    // ...
+  }
+}
+
+const review = new PerformanceReview(employee);
+review.perfReview();
+```
+
+**Good:**
+```javascript
+class PerformanceReview {
+  constructor(employee) {
+    this.employee = employee;
+  }
+
+  perfReview() {
+    this.getPeerReviews();
+    this.getManagerReview();
+    this.getSelfReview();
+  }
+
+  getPeerReviews() {
+    const peers = this.lookupPeers();
+    // ...
+  }
+
+  lookupPeers() {
+    return db.lookup(this.employee, 'peers');
+  }
+
+  getManagerReview() {
+    const manager = this.lookupManager();
+  }
+
+  lookupManager() {
+    return db.lookup(this.employee, 'manager');
+  }
+
+  getSelfReview() {
+    // ...
+  }
+}
+
+const review = new PerformanceReview(employee);
+review.perfReview();
+```
+
+**[⬆ back to top](#table-of-contents)**
+
+## **Comments**
+### Only comment things that have business logic complexity.
+Comments are an apology, not a requirement. Good code *mostly* documents itself. Don't comment when the code is self-explanatory, however introduce complex functions with a comment block. Use BA style comment blocks to break up code
+
+**Bad:**
+```javascript
+function hashIt(data) {
+  // The hash
+  let hash = 0;
+
+  // Length of string
+  const length = data.length;
+
+  // Loop through every character in data
+  for (let i = 0; i < length; i++) {
+    // Get character code.
+    const char = data.charCodeAt(i);
+    // Make the hash
+    hash = ((hash << 5) - hash) + char;
+    // Convert to 32-bit integer
+    hash &= hash;
+  }
+}
+```
+
+**Good:**
+```javascript
+
+function hashIt(data) {
+  let hash = 0;
+  const length = data.length;
+
+  for (let i = 0; i < length; i++) {
+    const char = data.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+
+    // Convert to 32-bit integer
+    hash &= hash;
+  }
+}
+
+```
+
+
+### Don't leave commented out code in your codebase
+Version control exists for a reason. Leave old code in your history.
+
+**Bad:**
+```javascript
+doStuff();
+// doOtherStuff();
+// doSomeMoreStuff();
+// doSoMuchStuff();
+```
+
+**Good:**
+```javascript
+doStuff();
+```
+**[⬆ back to top](#table-of-contents)**
+
+### Don't have journal comments
+Remember, use version control! There's no need for dead code, commented code,
+and especially journal comments. Use `git log` to get history!
+
+**Bad:**
+```javascript
+/**
+ * 2016-12-20: Removed monads, didn't understand them (RM)
+ * 2016-10-01: Improved using special monads (JP)
+ * 2016-02-03: Removed type-checking (LI)
+ * 2015-03-14: Added combine with type-checking (JR)
+ */
+function combine(a, b) {
+  return a + b;
+}
+```
+
+**Good:**
+```javascript
+function combine(a, b) {
+  return a + b;
+}
+```
+**[⬆ back to top](#table-of-contents)**
+
+### Avoid positional markers
+They usually just add noise. Let the functions and variable names along with the
+proper indentation and formatting give the visual structure to your code.
+
+**Bad:**
+```javascript
+////////////////////////////////////////////////////////////////////////////////
+// Scope Model Instantiation
+////////////////////////////////////////////////////////////////////////////////
+$scope.model = {
+  menu: 'foo',
+  nav: 'bar'
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Action setup
+////////////////////////////////////////////////////////////////////////////////
+const actions = function() {
+  // ...
+};
+```
+
+**Good:**
+```javascript
+$scope.model = {
+  menu: 'foo',
+  nav: 'bar'
+};
+
+const actions = function() {
+  // ...
+};
+```
 
 ## **Functions**
 
@@ -121,21 +385,22 @@ BA Web Sites are huge, and have been edited over time. Because of this the globa
 
 As modern javascript developers, we are now refactoring our code with the following best practices in mind.
 
- 1. Use Function Expressions over Declarative Functions
- 2. For semi-complex functionality use Self-Executing Anonymous Functions
- 3. For complex functionality use the Revealing Module JS Pattern
+ 1. If a function will only be used once, use an **Anonymous Function** (Function Expression)
+ 2. If a function is standalone, but could be used more than once, use a named function (**Declared Function)** *ex. most functions in plugins.js*
+ 3. For semi-complex functionality, but self contained on one page use **Self-Executing Anonymous Functions** to protect variables from conflicting with the global scope *ex. Events Pages, Page with a custom form*
+ 4. For complex functionality shared over many pages use the **[Revealing Module Pattern](https://addyosmani.com/resources/essentialjsdesignpatterns/book/#revealingmodulepatternjavascript)** *ex. Join Now, Myrcene*
 
-### Name our Anonymous Functions (Expression Functions)
-... as opposed to Function Declaration
+- [W3C's simple description of different function types](https://www.w3schools.com/js/js_function_definition.asp)
+- [Named function expressions demystified](http://kangax.github.io/nfe/)
+- [Intro to Self-executing anonymous functions - Noah Stokes](http://esbueno.noahstokes.com/post/77292606977/self-executing-anonymous-functions-or-how-to-write), good lead-in to the Revealing Module Pattern
+
+### Anonymous Functions (Expression Functions) vs Declared Functions
 
 Realize when we name use Function Expressions, the function can not be called ABOVE the function definition.
 
-[Named function expressions demystified](http://kangax.github.io/nfe/)
+**Declared Function**
+If the function you are writing is simple, doesn't create or modify global variables, **and will be used more than once**, use Declarative Functions.
 
-[Intro to Self-executing anonymous functions] (Noah Stokes) (http://esbueno.noahstokes.com/post/77292606977/self-executing-anonymous-functions-or-how-to-write), good lead in to the Revealing Module Pattern
-
-**Old (Function Declaration): **
-If the function you are writing could be called ANYWHERE in code, is simple, doesn't create global variables, Declarative Functions are ok. (Most functions in plugins.js and script.js probably fall into this category).
 ```javascript
 getPerson() // works
 function getPerson() {
@@ -146,21 +411,38 @@ function getPerson() {
 getPerson(); // works
 ```
 
-**Good (Named Function Expression):**
-Let's be strict about when a function can be called (probably only used on one page). Note expression is closed with a semicolon.
+**Good (Anonymous Function, or Function Expression):**
+If a function is going to be used **only one time**, use as Anonymous Function
+
+Note expression is closed with a semicolon.
+
+This style of function also very useful when creating deferred functions (Promises), as we don't need to nest the callbacks.
+
+This style of function is part of the Revealing Module Pattern.
 ```javascript
 getPerson(); // doesn't work
-let person = function getPerson() {
-	// do something
+let getPerson = function() {
+	// do something asyncronously
+	.
+	.
+	.
+	deferred.resolve(contact);
 	
-	return person;
+	//This function returns a deferred object
+	var deferred = $.Deferred();
+	return deferred.promise();	
 };
+
 getPerson(); // works
-person(); //works
+
+getPerson.done( function(person){
+
+});
 ```
 
 **Also Good (Self Executing Function Expression):**
-Note expression is closed with ```();```
+Note expression is closed with ```();```. All variables are protected and won't conflict with the global scope. The Revealing Module Pattern is one huge Self Executing Function Expression. (Out of scope for this document, but [learn more here](https://addyosmani.com/resources/essentialjsdesignpatterns/book/#revealingmodulepatternjavascript))
+
 ```javascript
 // thousand line of codes
 // written a year ago
@@ -232,8 +514,6 @@ createMenu({
   cancellable: true
 });
 ```
-**[⬆ back to top](#table-of-contents)**
-
 
 ### Functions should do one thing
 This is by far the most important rule in software engineering. When functions
@@ -267,7 +547,7 @@ function isActiveClient(client) {
   return clientRecord.isActive();
 }
 ```
-**[⬆ back to top](#table-of-contents)**
+
 
 ### Function names should say what they do
 
@@ -292,5 +572,348 @@ function addMonthToDate(month, date) {
 const date = new Date();
 addMonthToDate(1, date);
 ```
+### Set default objects with Object.assign
+*@TODO Discuss. We don't do this with Join Now, but should*
+**Bad:**
+```javascript
+const menuConfig = {
+  title: null,
+  body: 'Bar',
+  buttonText: null,
+  cancellable: true
+};
 
-> Written with [StackEdit](https://stackedit.io/).
+function createMenu(config) {
+  config.title = config.title || 'Foo';
+  config.body = config.body || 'Bar';
+  config.buttonText = config.buttonText || 'Baz';
+  config.cancellable = config.cancellable !== undefined ? config.cancellable : true;
+}
+
+createMenu(menuConfig);
+```
+
+**Good:**
+```javascript
+const menuConfig = {
+  title: 'Order',
+  // User did not include 'body' key
+  buttonText: 'Send',
+  cancellable: true
+};
+
+function createMenu(config) {
+  config = Object.assign({
+    title: 'Foo',
+    body: 'Bar',
+    buttonText: 'Baz',
+    cancellable: true
+  }, config);
+
+  // config now equals: {title: "Order", body: "Bar", buttonText: "Send", cancellable: true}
+  // ...
+}
+
+createMenu(menuConfig);
+```
+
+### Don't use flags as function parameters
+Flags tell your user that this function does more than one thing. Functions should do one thing. Split out your functions if they are following different code paths based on a boolean.
+
+**Bad:**
+```javascript
+function createFile(name, temp) {
+  if (temp) {
+    fs.create(`./temp/${name}`);
+  } else {
+    fs.create(name);
+  }
+}
+```
+
+**Good:**
+```javascript
+function createFile(name) {
+  fs.create(name);
+}
+
+function createTempFile(name) {
+  createFile(`./temp/${name}`);
+}
+```
+### Avoid Side Effects (part 2)
+In JavaScript, primitives are passed by value and objects/arrays are passed by
+reference. In the case of objects and arrays, if your function makes a change
+in a shopping cart array, for example, by adding an item to purchase,
+then any other function that uses that `cart` array will be affected by this
+addition. That may be great, however it can be bad too. Let's imagine a bad
+situation:
+
+The user clicks the "Purchase", button which calls a `purchase` function that
+spawns a network request and sends the `cart` array to the server. Because
+of a bad network connection, the `purchase` function has to keep retrying the
+request. Now, what if in the meantime the user accidentally clicks "Add to Cart"
+button on an item they don't actually want before the network request begins?
+If that happens and the network request begins, then that purchase function
+will send the accidentally added item because it has a reference to a shopping
+cart array that the `addItemToCart` function modified by adding an unwanted
+item.
+
+A great solution would be for the `addItemToCart` to always clone the `cart`,
+edit it, and return the clone. This ensures that no other functions that are
+holding onto a reference of the shopping cart will be affected by any changes.
+
+Two caveats to mention to this approach:
+  1. There might be cases where you actually want to modify the input object,
+but when you adopt this programming practice you will find that those cases
+are pretty rare. Most things can be refactored to have no side effects!
+
+  2. Cloning big objects can be very expensive in terms of performance. Luckily,
+this isn't a big issue in practice because there are
+[great libraries](https://facebook.github.io/immutable-js/) that allow
+this kind of programming approach to be fast and not as memory intensive as
+it would be for you to manually clone objects and arrays.
+
+**Bad:**
+```javascript
+const addItemToCart = (cart, item) => {
+  cart.push({ item, date: Date.now() });
+};
+```
+
+**Good:**
+```javascript
+const addItemToCart = (cart, item) => {
+  return [...cart, { item, date: Date.now() }];
+};
+```
+### Encapsulate conditionals
+
+**Bad:**
+```javascript
+if (fsm.state === 'fetching' && isEmpty(listNode)) {
+  // ...
+}
+```
+
+**Good:**
+```javascript
+function shouldShowSpinner(fsm, listNode) {
+  return fsm.state === 'fetching' && isEmpty(listNode);
+}
+
+if (shouldShowSpinner(fsmInstance, listNodeInstance)) {
+  // ...
+}
+```
+**[⬆ back to top](#table-of-contents)**
+
+### Avoid negative conditionals
+
+**Bad:**
+```javascript
+function isDOMNodeNotPresent(node) {
+  // ...
+}
+
+if (!isDOMNodeNotPresent(node)) {
+  // ...
+}
+```
+
+**Good:**
+```javascript
+function isDOMNodePresent(node) {
+  // ...
+}
+
+if (isDOMNodePresent(node)) {
+  // ...
+}
+```
+### Avoid conditionals
+This seems like an impossible task. Upon first hearing this, most people say,
+"how am I supposed to do anything without an `if` statement?" The answer is that
+you can use polymorphism to achieve the same task in many cases. The second
+question is usually, "well that's great but why would I want to do that?" The
+answer is a previous clean code concept we learned: a function should only do
+one thing. When you have classes and functions that have `if` statements, you
+are telling your user that your function does more than one thing. Remember,
+just do one thing.
+
+**Bad:**
+```javascript
+class Airplane {
+  // ...
+  getCruisingAltitude() {
+    switch (this.type) {
+      case '777':
+        return this.getMaxAltitude() - this.getPassengerCount();
+      case 'Air Force One':
+        return this.getMaxAltitude();
+      case 'Cessna':
+        return this.getMaxAltitude() - this.getFuelExpenditure();
+    }
+  }
+}
+```
+
+**Good:**
+```javascript
+class Airplane {
+  // ...
+}
+
+class Boeing777 extends Airplane {
+  // ...
+  getCruisingAltitude() {
+    return this.getMaxAltitude() - this.getPassengerCount();
+  }
+}
+
+class AirForceOne extends Airplane {
+  // ...
+  getCruisingAltitude() {
+    return this.getMaxAltitude();
+  }
+}
+
+class Cessna extends Airplane {
+  // ...
+  getCruisingAltitude() {
+    return this.getMaxAltitude() - this.getFuelExpenditure();
+  }
+}
+```
+## **Objects and Data Structures**
+### Use getters and setters
+*@TODO Discuss: This is really important in Join Now, and NZ isn't sure we're doing it properly*
+Using getters and setters to access data on objects could be better than simply
+looking for a property on an object. "Why?" you might ask. Well, here's an
+unorganized list of reasons why:
+
+* When you want to do more beyond getting an object property, you don't have
+to look up and change every accessor in your codebase.
+* Makes adding validation simple when doing a `set`.
+* Encapsulates the internal representation.
+* Easy to add logging and error handling when getting and setting.
+* You can lazy load your object's properties, let's say getting it from a
+server.
+
+
+**Bad:**
+```javascript
+function makeBankAccount() {
+  // ...
+
+  return {
+    balance: 0,
+    // ...
+  };
+}
+
+const account = makeBankAccount();
+account.balance = 100;
+```
+
+**Good:**
+```javascript
+function makeBankAccount() {
+  // this one is private
+  let balance = 0;
+
+  // a "getter", made public via the returned object below
+  function getBalance() {
+    return balance;
+  }
+
+  // a "setter", made public via the returned object below
+  function setBalance(amount) {
+    // ... validate before updating the balance
+    balance = amount;
+  }
+
+  return {
+    // ...
+    getBalance,
+    setBalance,
+  };
+}
+
+const account = makeBankAccount();
+account.setBalance(100);
+```
+## Classes (ES6)
+BA hasn't delved into ES6/Classes (yet) but note that Ryan McDermott has a lot of good notes on this. In retrospect, BAJN could have been built with ES6.
+
+## **Error Handling**
+Thrown errors are a good thing! They mean the runtime has successfully
+identified when something in your program has gone wrong and it's letting
+you know by stopping function execution on the current stack, killing the
+process (in Node), and notifying you in the console with a stack trace.
+
+### Don't ignore caught errors
+Doing nothing with a caught error doesn't give you the ability to ever fix
+or react to said error. Logging the error to the console (`console.log`)
+isn't much better as often times it can get lost in a sea of things printed
+to the console. If you wrap any bit of code in a `try/catch` it means you
+think an error may occur there and therefore you should have a plan,
+or create a code path, for when it occurs.
+
+**Bad:**
+```javascript
+try {
+  functionThatMightThrow();
+} catch (error) {
+  console.log(error);
+}
+```
+
+**Good:**
+```javascript
+try {
+  functionThatMightThrow();
+} catch (error) {
+  // One option (more noisy than console.log):
+  console.error(error);
+  // Another option:
+  notifyUserOfError(error);
+  // Another option:
+  reportErrorToService(error);
+  // OR do all three!
+}
+```
+
+### Don't ignore rejected promises
+For the same reason you shouldn't ignore caught errors
+from `try/catch`.
+
+**Bad:**
+```javascript
+getdata()
+  .then((data) => {
+    functionThatMightThrow(data);
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+```
+
+**Good:**
+```javascript
+getdata()
+  .then((data) => {
+    functionThatMightThrow(data);
+  })
+  .catch((error) => {
+    // One option (more noisy than console.log):
+    console.error(error);
+    // Another option:
+    notifyUserOfError(error);
+    // Another option:
+    reportErrorToService(error);
+    // OR do all three!
+  });
+```
+
+
