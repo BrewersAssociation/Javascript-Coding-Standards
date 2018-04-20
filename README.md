@@ -8,11 +8,14 @@ This document will outline the best practices for organizing and styling JS docu
 ## Table of Contents
 
  - Introduction
- - Write Clean Code (Coding Styles)(#Write Clean Code (Coding Styles))
- - Formatting(#Comments)
- - Comments
- - Variables
- - Functions
+ - Write Clean Code (Coding Styles)
+   - Comments
+   - Variables
+   - Formatting
+ - Functions 
+ - Objects and Data Structures
+ - Classes
+ - Error Handling
 
 
 ## Write Clean Code (Coding Styles)
@@ -20,8 +23,181 @@ We try and share coding styles between JS, CSS, and PHP.
 > - [Use tabs over spaces for indents](http://lea.verou.me/2012/01/why-tabs-are-clearly-superior/)
 > - 80 character wide columns
 > - meaningful whitespace
-> - comment your code _link to comment styles_
-### Comment Styles
+> - comment your code
+
+## **Comments**
+
+### Only comment things that have business logic complexity.
+Comments are an apology, not a requirement. Good code *mostly* documents itself. Don't comment when the code is self-explanatory, however introduce complex functions with a comment block. Use BA style comment blocks to break up code
+
+**Bad:**
+```javascript
+function hashIt(data) {
+  // The hash
+  let hash = 0;
+
+  // Length of string
+  const length = data.length;
+
+  // Loop through every character in data
+  for (let i = 0; i < length; i++) {
+    // Get character code.
+    const char = data.charCodeAt(i);
+    // Make the hash
+    hash = ((hash << 5) - hash) + char;
+    // Convert to 32-bit integer
+    hash &= hash;
+  }
+}
+```
+
+**Good:**
+```javascript
+
+function hashIt(data) {
+  let hash = 0;
+  const length = data.length;
+
+  for (let i = 0; i < length; i++) {
+    const char = data.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+
+    // Convert to 32-bit integer
+    hash &= hash;
+  }
+}
+
+```
+
+
+### Don't leave commented out code in your codebase
+Version control exists for a reason. Leave old code in your history.
+
+**Bad:**
+```javascript
+doStuff();
+// doOtherStuff();
+// doSomeMoreStuff();
+// doSoMuchStuff();
+```
+
+**Good:**
+```javascript
+doStuff();
+```
+
+
+### Don't have journal comments
+Remember, use version control! There's no need for dead code, commented code,
+and especially journal comments. Use `git log` to get history!
+
+**Bad:**
+```javascript
+/**
+ * 2016-12-20: Removed monads, didn't understand them (RM)
+ * 2016-10-01: Improved using special monads (JP)
+ * 2016-02-03: Removed type-checking (LI)
+ * 2015-03-14: Added combine with type-checking (JR)
+ */
+function combine(a, b) {
+  return a + b;
+}
+```
+
+**Good:**
+```javascript
+function combine(a, b) {
+  return a + b;
+}
+```
+
+
+### Avoid positional markers
+They usually just add noise. Let the functions and variable names along with the
+proper indentation and formatting give the visual structure to your code. That said, use bookmarks to break up large JS files into manageable sections
+
+**Bad:**
+```javascript
+////////////////////////////////////////////////////////////////////////////////
+// Scope Model Instantiation
+////////////////////////////////////////////////////////////////////////////////
+$scope.model = {
+  menu: 'foo',
+  nav: 'bar'
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Action setup
+////////////////////////////////////////////////////////////////////////////////
+const actions = function() {
+  // ...
+};
+```
+
+**Good:**
+```javascript
+$scope.model = {
+  menu: 'foo',
+  nav: 'bar'
+};
+
+const actions = function() {
+  // ...
+};
+``` 
+## Comment Styles
+
+### Table of Contents
+```
+/*
+* Name of File
+*
+* Short description of the file. Can be multiline
+*
+* TOC
+* 1.0 Section Title
+*  - 1.1 Subsection
+* 2.0 Section Title
+*/
+```
+### Bookmarks
+Coda lets you skip to sections by using this bookmark style. Everything in the TOC should be bookmarked
+```
+////
+//
+//! 1.0 Section Title
+//
+////
+
+```
+Describe complex functions with title, description, params, and return type
+### Function Descriptions
+```
+/**
+ * functionName()
+ *
+ * @summary What does this complex functino do?
+ *
+ *
+ * @param type paramName : brief description
+ * @param type paramName : brief description
+ * 
+ * @return none, or variable/object
+ */
+```
+### First Level, Block Comment
+```
+// Second Level Comments describing something below
+//----------------------------------------------------
+```
+### Second Level Comment
+```
+//-- Nice one line break to describe something below --//
+```
+### Inline Comments
+```
+// This is an inline, or one-line comment. Note the space and capitalization
+```
 
 ## Variables
 ### Use meaningful and pronounceable variable names
@@ -171,7 +347,6 @@ function restoreDatabase() {}
 class Animal {}
 class Alpaca {}
 ```
-**[⬆ back to top](#table-of-contents)**
 
 
 ### Function callers and callees should be close
@@ -255,128 +430,6 @@ class PerformanceReview {
 
 const review = new PerformanceReview(employee);
 review.perfReview();
-```
-
-**[⬆ back to top](#table-of-contents)**
-
-## **Comments**
-### Only comment things that have business logic complexity.
-Comments are an apology, not a requirement. Good code *mostly* documents itself. Don't comment when the code is self-explanatory, however introduce complex functions with a comment block. Use BA style comment blocks to break up code
-
-**Bad:**
-```javascript
-function hashIt(data) {
-  // The hash
-  let hash = 0;
-
-  // Length of string
-  const length = data.length;
-
-  // Loop through every character in data
-  for (let i = 0; i < length; i++) {
-    // Get character code.
-    const char = data.charCodeAt(i);
-    // Make the hash
-    hash = ((hash << 5) - hash) + char;
-    // Convert to 32-bit integer
-    hash &= hash;
-  }
-}
-```
-
-**Good:**
-```javascript
-
-function hashIt(data) {
-  let hash = 0;
-  const length = data.length;
-
-  for (let i = 0; i < length; i++) {
-    const char = data.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-
-    // Convert to 32-bit integer
-    hash &= hash;
-  }
-}
-
-```
-
-
-### Don't leave commented out code in your codebase
-Version control exists for a reason. Leave old code in your history.
-
-**Bad:**
-```javascript
-doStuff();
-// doOtherStuff();
-// doSomeMoreStuff();
-// doSoMuchStuff();
-```
-
-**Good:**
-```javascript
-doStuff();
-```
-**[⬆ back to top](#table-of-contents)**
-
-### Don't have journal comments
-Remember, use version control! There's no need for dead code, commented code,
-and especially journal comments. Use `git log` to get history!
-
-**Bad:**
-```javascript
-/**
- * 2016-12-20: Removed monads, didn't understand them (RM)
- * 2016-10-01: Improved using special monads (JP)
- * 2016-02-03: Removed type-checking (LI)
- * 2015-03-14: Added combine with type-checking (JR)
- */
-function combine(a, b) {
-  return a + b;
-}
-```
-
-**Good:**
-```javascript
-function combine(a, b) {
-  return a + b;
-}
-```
-**[⬆ back to top](#table-of-contents)**
-
-### Avoid positional markers
-They usually just add noise. Let the functions and variable names along with the
-proper indentation and formatting give the visual structure to your code.
-
-**Bad:**
-```javascript
-////////////////////////////////////////////////////////////////////////////////
-// Scope Model Instantiation
-////////////////////////////////////////////////////////////////////////////////
-$scope.model = {
-  menu: 'foo',
-  nav: 'bar'
-};
-
-////////////////////////////////////////////////////////////////////////////////
-// Action setup
-////////////////////////////////////////////////////////////////////////////////
-const actions = function() {
-  // ...
-};
-```
-
-**Good:**
-```javascript
-$scope.model = {
-  menu: 'foo',
-  nav: 'bar'
-};
-
-const actions = function() {
-  // ...
-};
 ```
 
 ## **Functions**
