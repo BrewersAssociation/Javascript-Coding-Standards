@@ -1,31 +1,35 @@
 
 # Brewers Association Coding Standards: Javascript
 
-This document is based on Clean Code Javascript by [Ryan McDermott](https://github.com/ryanmcdermott/clean-code-javascript), Eloqeunt Javascript by Addy Osomani , How to Write Clean Javascript by Noah Stokes
-
-This document will outline the best practices for organizing and styling JS documents for Brewers Association Projects.
-
 ## Table of Contents
 
- - Introduction
- - Write Clean Code (Coding Styles)
-   - Comments
-   - Variables
-   - Formatting
- - Functions 
- - Objects and Data Structures
- - Classes
- - Error Handling
+ - [Introduction](#introduction)
+ - [Write Clean Code (Coding Styles)](#write-clean-code)
+   - [Comments](#comments)
+   - [Variables](#variables)
+   - [Formatting](#formatting)
+ - [Functions](#functions)
+ - [Objects and Data Structures](#objects-and-data-structures)
+ - [Classes](#classes)
+ - [Error Handling](#error-handling)
+
+## Introduction
+This document is based on [Clean Code Javascript](https://github.com/ryanmcdermott/clean-code-javascript) by Ryan McDermott, [Eloqeunt Javascript](https://eloquentjavascript.net/) by Marijn Haverbeke, and [Learning Javascript Design Patterns](https://addyosmani.com/resources/essentialjsdesignpatterns/book/index.html) by [Addy Osomani](https://addyosmani.com/)
+
+This document will outline the best practices for organizing and styling JS documents for Brewers Association Projects, as well as other programming best practices.
 
 
-## Write Clean Code (Coding Styles)
+
+
+
+## Write Clean Code
 We try and share coding styles between JS, CSS, and PHP. 
 > - [Use tabs over spaces for indents](http://lea.verou.me/2012/01/why-tabs-are-clearly-superior/)
 > - 80 character wide columns
 > - meaningful whitespace
 > - comment your code
 
-## **Comments**
+## Comments
 
 ### Only comment things that have business logic complexity.
 Comments are an apology, not a requirement. Good code *mostly* documents itself. Don't comment when the code is self-explanatory, however introduce complex functions with a comment block. Use BA style comment blocks to break up code
